@@ -4,6 +4,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from 'primereact/checkbox';
 import { RadioButton } from 'primereact/radiobutton';
 import { useEffect, useState } from "react";
+import { API } from "../../services";
         
         
 
@@ -15,6 +16,9 @@ const PageProductsContainer = styled.div`
     }
     & .content{
         margin-top: 40px;
+    }
+    & label{
+        cursor: pointer;
     }
     
 `;
@@ -36,17 +40,42 @@ const PageProducts = () => {
         }
     ];
     const [brands, setBrands] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [genders, setGenders] = useState([]);
+    const [filters, setFilters] = useState([]);
+    const [estado, setEstado] = useState('');
     
-    function getBrands(){
-        fetch('http://localhost:8000/brands')
-        .then(res => res.json())
-        .then(res => {
-            setBrands(res);
-        })
+    async function getBrands(){
+        const response = await API.get('brands');
+        setBrands(response.data);
+    }
+
+    async function getCategories(){
+        const response = await API.get('categories');
+        setCategories(response.data);
+    }
+
+    async function getGenders(){
+        const response = await API.get('genders');
+        setGenders(response.data);
+    }
+
+    function checkSelectedItems(e){
+        let isSelected = e.target.checked;
+        let value = e.target.value;
+        if(!isSelected){
+            setFilters((prevData) => {
+                return prevData.filter((item) => item != value);
+            });
+            return;
+        }
+        setFilters([...filters, value]);
     }
 
     useEffect(() => {
         getBrands();
+        getCategories();
+        getGenders();
     }, []);
 
     return (
@@ -78,8 +107,13 @@ const PageProducts = () => {
                         <ul className="list-style-none">
                             {
                                 brands.map((marca) => (
-                                    <li className="flex gap-3 mb-2">
-                                        <Checkbox id={marca.brand_name}/>
+                                    <li key={marca.brand_id} className="flex gap-3 mb-2">
+                                        <Checkbox
+                                            id={marca.brand_name}
+                                            value={marca.brand_name}
+                                            onChange={(e) => checkSelectedItems(e)}
+                                            checked={filters.includes(marca.brand_name)}
+                                        />
                                         <label htmlFor={marca.brand_name}>{marca.brand_name}</label>
                                     </li>
                                 ))
@@ -87,47 +121,53 @@ const PageProducts = () => {
                         </ul>
                         <h6 className="mb-2 mt-3">Categoria</h6>
                         <ul className="list-style-none">
-                            <li className="flex gap-3 mb-2">
-                                <Checkbox id="categoria1"/>
-                                <label htmlFor="categoria1">Categoria 1</label>
-                            </li>
-                            <li className="flex gap-3 mb-2">
-                                <Checkbox id="categoria2"/>
-                                <label htmlFor="categoria2">Categoria 2</label>
-                            </li>
-                            <li className="flex gap-3 mb-2">
-                                <Checkbox id="categoria3"/>
-                                <label htmlFor="categoria3">Categoria 3</label>
-                            </li>
-                            <li className="flex gap-3 mb-2">
-                                <Checkbox id="categoria4"/>
-                                <label htmlFor="categoria4">Categoria 4</label>
-                            </li>
+                            {
+                                categories.map((c) => (
+                                    <li key={c.category_id} className="flex gap-3 mb-2">
+                                        <Checkbox 
+                                            id={c.category_name}
+                                            value={c.category_name}
+                                            onChange={(e) => checkSelectedItems(e)}
+                                            checked={filters.includes(c.category_name)}
+                                        />
+                                        <label htmlFor={c.category_name}>{c.category_name}</label>
+                                    </li>
+                                ))
+                            }
                         </ul>
                         <h6 className="mb-2 mt-3">Gênero</h6>
                         <ul className="list-style-none">
-                            <li className="flex gap-3 mb-2">
-                                <Checkbox id="genero1"/>
-                                <label htmlFor="genero1">Gênero 1</label>
-                            </li>
-                            <li className="flex gap-3 mb-2">
-                                <Checkbox id="genero2"/>
-                                <label htmlFor="genero2">Gênero 2</label>
-                            </li>
-                            <li className="flex gap-3 mb-2">
-                                <Checkbox id="genero3"/>
-                                <label htmlFor="genero3">Gênero 3</label>
-                            </li>
+                            {
+                                genders.map((g) => (
+                                    <li key={g.gender_id} className="flex gap-3 mb-2">
+                                        <Checkbox
+                                            id={g.gender_name}
+                                            value={g.gender_name}
+                                            onChange={(e) => checkSelectedItems(e)}
+                                            checked={filters.includes(g.gender_name)}
+                                        />
+                                        <label htmlFor={g.gender_name}>{g.gender_name}</label>
+                                    </li>
+                                ))
+                            }
                         </ul>
                         <h6 className="mb-2 mt-3">Estado</h6>
                         <ul className="list-style-none">
                             <li className="flex gap-3 mb-2">
-                                <RadioButton id="novo" checked/>
-                                <label htmlFor="novo">Novo</label>
+                                <RadioButton
+                                    id="novo"
+                                    onChange={() => setEstado('novo')}
+                                    checked={estado == 'novo'}
+                                />
+                                <label htmlFor="novo" onClick={() => setEstado('novo')}>Novo</label>
                             </li>
                             <li className="flex gap-3 mb-2">
-                                <RadioButton id="usado"/>
-                                <label htmlFor="usado">Usado</label>
+                                <RadioButton 
+                                    id="usado"
+                                    onChange={() => setEstado('usado')}
+                                    checked={estado == 'usado'}
+                                />
+                                <label htmlFor="usado" onClick={() => setEstado('usado')}>Usado</label>
                             </li>
                         </ul>
                     </div>
