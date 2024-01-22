@@ -59,39 +59,56 @@
             "product_name": "Produto 1",
             "product_price": 100,
             "product_discount": 30,
+            "product_image": "https://fragatto.com.br/cdn/shop/products/tenis-masculino-sport-ultra-tenis-masculino-sport-ultra-calcados-010-fragatto-520433_800x.webp?v=1686124862",
             "category_id": 1,
             "category_name": "Esporte e lazer",
             "brand_id": 1,
             "brand_name": "Nike",
             "gender_id": 1,
             "gender_name": "Masculino",
-            "review_rate:": 5
+            "review_rate": 5
         },
         {
             "product_id": 2,
             "product_name": "Produto 2",
-            "product_price": 100,
+            "product_price": 300,
             "product_discount": 0,
+            "product_image": "https://m.media-amazon.com/images/I/51EE6mt9VfL._AC_SY695_.jpg",
             "category_id": 1,
             "category_name": "Corrida",
             "brand_id": 2,
             "brand_name": "Olimpkus",
             "gender_id": 1,
             "gender_name": "Masculino",
-            "review_rate:": 4
+            "review_rate": 4
         },
         {
             "product_id": 3,
             "product_name": "Produto 3",
-            "product_price": 100,
+            "product_price": 200,
             "product_discount": 0,
+            "product_image": "https://m.media-amazon.com/images/I/41P9VNxmD6L._AC_SY695_.jpg",
             "category_id": 1,
             "category_name": "Casual",
             "brand_id": 2,
             "brand_name": "Balenciaga",
             "gender_id": 1,
             "gender_name": "Feminino",
-            "review_rate:": 4.5
+            "review_rate": 3
+        },
+        {
+            "product_id": 4,
+            "product_name": "Produto 4",
+            "product_price": 6000,
+            "product_discount": 50,
+            "product_image": "https://img.irroba.com.br/fit-in/600x600/filters:fill(fff):quality(80)/tadeaioo/catalog/prime/nude/tenis-feminino-academia-ultrabone-ultra-prime-nude-rosa-1.jpg",
+            "category_id": 1,
+            "category_name": "Casual",
+            "brand_id": 2,
+            "brand_name": "Balenciaga",
+            "gender_id": 1,
+            "gender_name": "Feminino",
+            "review_rate": 5
         }
     ]
 }

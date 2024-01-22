@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from 'primereact/checkbox';
 import { RadioButton } from 'primereact/radiobutton';
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { API } from "../../services";
 import Product from "../../components/Product";
         
@@ -43,7 +43,9 @@ const PageProducts = () => {
     const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
     const [genders, setGenders] = useState([]);
+    const [products, setProducts] = useState([]);
     const [filters, setFilters] = useState([]);
+    const [itensFiltrados, setItensFiltrados] = useState([]);
     const [estado, setEstado] = useState('');
     
     async function getBrands(){
@@ -61,6 +63,11 @@ const PageProducts = () => {
         setGenders(response.data);
     }
 
+    async function getProducts(){
+        const response = await API.get('products');
+        setProducts(response.data);
+    }
+
     function checkSelectedItems(e){
         let isSelected = e.target.checked;
         let value = e.target.value;
@@ -73,11 +80,41 @@ const PageProducts = () => {
         setFilters([...filters, value]);
     }
 
+    function filterItens(filterType){
+        switch(filterType){
+            case 1:
+                return setItensFiltrados(products.sort((a, b) => b.review_rate - a.review_rate));
+            case 2:
+                return setItensFiltrados(products.sort((a, b) => b.product_price - a.product_price));
+            case 3:
+                return setItensFiltrados(products.sort((a, b) => a.product_price - b.product_price));
+        }
+    }
+
+    useEffect(() => {
+        filterItens(ordenacao);
+    }, [ordenacao]);
+
+    const filteredItens = useMemo(() => {
+        switch(ordenacao){
+        case 1:
+            return products.sort((a, b) => b.review_rate - a.review_rate);
+        case 2:
+            return products.sort((a, b) => a.product_price - b.product_price);
+        case 3:
+            return products.sort((a, b) => b.product_price - a.product_price);
+        default:
+            return products;
+        }
+    }, [ordenacao]);
+
     useEffect(() => {
         getBrands();
         getCategories();
         getGenders();
+        getProducts();
     }, []);
+
 
     return (
         <PageProductsContainer>
@@ -93,7 +130,7 @@ const PageProducts = () => {
                             options={tiposDeOrdenacao}
                             optionLabel="name"
                             optionValue="value"
-                            onChange={e => setOrdenacao(e.value)}
+                            onChange={e => setOrdenacao(e.target.value)}
                             className="border-0 bg-transparent"
                         />
                     </h6>
@@ -173,14 +210,19 @@ const PageProducts = () => {
                         </ul>
                     </div>
                 </div>
-                <div className="w-9">
-                    <Product
-                        classes="w-4"
-                        name="nome do produto"
-                        categoryName="categoria"
-                        discount="0"
-                        price="200"
-                    />
+                <div className="w-9 flex flex-wrap gap-3">
+                    {
+                        filteredItens.map(p => (
+                            <Product
+                                key={p.product_id}
+                                name={`${p.review_rate} ${p.product_name}`}
+                                image={p.product_image}
+                                categoryName={p.category_name}
+                                discount={p.product_discount}
+                                price={p.product_price}
+                            />
+                        ))
+                    }
                 </div>
             </div>
         </PageProductsContainer>
