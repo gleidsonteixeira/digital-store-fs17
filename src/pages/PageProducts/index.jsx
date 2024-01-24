@@ -65,6 +65,7 @@ const PageProducts = () => {
 
     async function getProducts(){
         const response = await API.get('products');
+        setProducts(response.data);
         setItensFiltrados([...response.data.sort((a, b) => b.review_rate - a.review_rate)]);
     }
 
@@ -100,6 +101,15 @@ const PageProducts = () => {
             break;
         }
     }, [ordenacao, setItensFiltrados]);
+
+    useEffect(() => {
+        if(filters.length > 0){
+            const busca = products.filter(p => filters.some(f => f == p.brand_name));
+            setItensFiltrados([...busca]);
+            return;
+        }
+        setItensFiltrados([...products.sort((a, b) => b.review_rate - a.review_rate)]);
+    }, [filters, products, setItensFiltrados]);
 
     return (
         <PageProductsContainer>
@@ -200,7 +210,7 @@ const PageProducts = () => {
                         itensFiltrados.map(p => (
                             <Product
                                 key={p.product_id}
-                                name={`${p.review_rate} ${p.product_name}`}
+                                name={`${p.brand_name} ${p.product_name}`}
                                 image={p.product_image}
                                 categoryName={p.category_name}
                                 discount={p.product_discount}
