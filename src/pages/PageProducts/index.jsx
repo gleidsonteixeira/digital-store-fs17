@@ -65,7 +65,7 @@ const PageProducts = () => {
 
     async function getProducts(){
         const response = await API.get('products');
-        setProducts(response.data);
+        setItensFiltrados([...response.data.sort((a, b) => b.review_rate - a.review_rate)]);
     }
 
     function checkSelectedItems(e){
@@ -80,41 +80,26 @@ const PageProducts = () => {
         setFilters([...filters, value]);
     }
 
-    function filterItens(filterType){
-        switch(filterType){
-            case 1:
-                return setItensFiltrados(products.sort((a, b) => b.review_rate - a.review_rate));
-            case 2:
-                return setItensFiltrados(products.sort((a, b) => b.product_price - a.product_price));
-            case 3:
-                return setItensFiltrados(products.sort((a, b) => a.product_price - b.product_price));
-        }
-    }
-
-    useEffect(() => {
-        filterItens(ordenacao);
-    }, [ordenacao]);
-
-    const filteredItens = useMemo(() => {
-        switch(ordenacao){
-        case 1:
-            return products.sort((a, b) => b.review_rate - a.review_rate);
-        case 2:
-            return products.sort((a, b) => a.product_price - b.product_price);
-        case 3:
-            return products.sort((a, b) => b.product_price - a.product_price);
-        default:
-            return products;
-        }
-    }, [ordenacao]);
-
     useEffect(() => {
         getBrands();
         getCategories();
         getGenders();
         getProducts();
     }, []);
-
+    
+    useEffect(() => {
+        switch(ordenacao){
+            case 1:
+                setItensFiltrados([...itensFiltrados.sort((a, b) => b.review_rate - a.review_rate)]);
+            break;
+            case 2:
+                setItensFiltrados([...itensFiltrados.sort((a, b) => a.product_price - b.product_price)]);
+            break;
+            case 3:
+                setItensFiltrados([...itensFiltrados.sort((a, b) => b.product_price - a.product_price)]);
+            break;
+        }
+    }, [ordenacao, setItensFiltrados]);
 
     return (
         <PageProductsContainer>
@@ -212,7 +197,7 @@ const PageProducts = () => {
                 </div>
                 <div className="w-9 flex flex-wrap gap-3">
                     {
-                        filteredItens.map(p => (
+                        itensFiltrados.map(p => (
                             <Product
                                 key={p.product_id}
                                 name={`${p.review_rate} ${p.product_name}`}
